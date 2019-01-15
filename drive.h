@@ -1,15 +1,7 @@
 #define Rmotor 0
 #define Lmotor 2
 #define rope 3
-void rope_open(int input)
-{
-    cmpc(3);
-    while(gmpc(3)<input)
-    {
-        mav(rope,500);
-    }
-    mav(rope,0);
-}
+
 void rope_close(int input)
 {
     cmpc(3);
