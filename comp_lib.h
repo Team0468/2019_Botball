@@ -1,19 +1,30 @@
-#define right_motor 0
-#define left_motor 1
+
+#define right_motor 1
+#define left_motor 2
 #define target_theta_45 225000 //numbers for wallaby-4188
 #define target_theta_90 507500
 #define target_theta_180 1061500
-int target_theta_m45 = target_theta_45;
-int target_theta_m90 = target_theta_90;
-int target_theta_m180 = target_theta_180;
+#define target_theta_360 2175000
+#define target_theta_m45 225000
+#define target_theta_m90 507500
+#define target_theta_m180 1061500
+#define target_theta_m360 2175000
 
-#define analog_white 300
-#define analog_black 3500
+#define analog_white 1300
+#define analog_black 3000
 #define digital_right 0
 #define digital_left 1
 #define left_IR 1
 #define right_IR 0
 #define stop 0
+#define multiplier 1.2
+
+/*#define arm 0
+#define claw 1
+#define arm_start 600
+#define claw_start 1055
+#define claw_close 600
+#define arm_up 0*/
 
 
 void move(l_speed,r_speed){
@@ -125,6 +136,7 @@ double calibrate_gyro(){
 }
 
 void drive_with_gyro(int speed, double time){
+   calibrate_gyro();
     double startTime = seconds();
     double theta = 0;
     while(seconds() - startTime < time){
@@ -144,9 +156,11 @@ void drive_with_gyro(int speed, double time){
         theta += (gyro_z() - bias) * 10;
         printf("%f",theta);
     }
+    ao();
 }
 
 void PID_gyro_drive(int speed, double time){
+    calibrate_gyro();
     double startTime = seconds();
     double theta = 0;
     while((seconds() - startTime) < time){
@@ -156,12 +170,13 @@ void PID_gyro_drive(int speed, double time){
         }
 
         else{
-            mav(left_motor, (speed + (speed * theta/100000)));            
-            mav(right_motor, (speed - (speed * (theta/100000))));
+            mav(left_motor, (speed - (speed * theta/100000)));            
+            mav(right_motor, (speed + (speed * (theta/100000))));
         }
         msleep(10);
         theta += (gyro_z() - bias) * 10;
     }
+    ao();
 }
 
 void turn_with_gyro_create(int speed, int deg){
@@ -180,6 +195,10 @@ void turn_with_gyro_create(int speed, int deg){
             targetTheta = target_theta_180;
            create_drive_direct(speed,speed*-1);
             break;
+        case 360:
+            targetTheta = target_theta_360;
+            create_drive_direct(speed,speed*-1);
+            break;
         case -45:
             targetTheta = target_theta_m45;
             create_drive_direct(speed*-1,speed);
@@ -190,6 +209,10 @@ void turn_with_gyro_create(int speed, int deg){
             break;
         case -180:
             targetTheta = target_theta_m180;
+            create_drive_direct(speed*-1,speed);
+            break;
+        case -360:
+            targetTheta = target_theta_m360;
             create_drive_direct(speed*-1,speed);
             break;
         default:
@@ -206,6 +229,7 @@ void turn_with_gyro_create(int speed, int deg){
 
 
 void turn_with_gyro(int speed, int deg){
+    calibrate_gyro();
     double theta = 0;
     int targetTheta; 
     switch(deg){
@@ -221,6 +245,10 @@ void turn_with_gyro(int speed, int deg){
             targetTheta = target_theta_180;
             move(speed,speed*-1);
             break;
+        case 360:
+            targetTheta = target_theta_360;
+            move(speed,speed*-1);
+            break;
         case -45:
             targetTheta = target_theta_m45;
             move(speed*-1,speed);
@@ -231,6 +259,10 @@ void turn_with_gyro(int speed, int deg){
             break;
         case -180:
             targetTheta = target_theta_m180;
+            move(speed*-1,speed);
+            break;
+        case -360:
+            targetTheta = target_theta_m360;
             move(speed*-1,speed);
             break;
         default:
@@ -244,22 +276,32 @@ void turn_with_gyro(int speed, int deg){
     }
     mav(right_motor, 0);
     mav(right_motor, 0);
+    ao();
 }
 
-void PID_gyro_drive_create(int speed, double time){
- 	calibrate_gyro();
-    double startTime = seconds();
-    double theta = 0;
-    while ((seconds() - startTime) < time){
-        if (speed > 0){
-            create_drive_direct((speed + (speed * theta/100000)),(speed - (speed * theta/100000)));
-        }
-        else{
-            create_drive_direct((speed - (speed * theta/100000)), (speed + (speed * theta/100000)));
-        }
-        msleep(15);
-        theta += (gyro_z() - bias) * 10;
-    }
+/*void run_one(){
+    
+    
+    square_up(white,600);
+    msleep(250);
+    drive_with_gyro(-600,1.25);
+    msleep(250);
+    turn_with_gyro(350,-90);
+    square_up(black,200);
+    msleep(500);
+    drive_with_gyro(500,4);
+    slow_arm(prism2);
+    slow_hand(open);
+    slow_arm(down);
+    slow_hand(closed);
+    square_up(black,600);
+    msleep(500);
+    
+}*/
+
+void firefighter_adjust()
+{
+    move(-600,600);
+    msleep(60);
+    ao();
 }
-
-
