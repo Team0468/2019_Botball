@@ -38,7 +38,7 @@ int physical = 3;
 int black_speed;
 void square_up(int ending,int speed){
     if(speed > 0 && speed < 600){
-        black_speed = 0.5*speed;
+        black_speed = 0.75*speed;
     }
     else{black_speed = 0.25*speed;}
     if(ending == 1 || ending == 2){
