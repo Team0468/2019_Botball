@@ -1,3 +1,5 @@
+#include <kipr/botball.h>
+#include <comp_lib.h>
 
 #define right_motor 1
 #define left_motor 2
@@ -20,24 +22,17 @@
 #define multiplier 1.3
 #define back_IR 5
 
-/*#define arm 0
-#define claw 1
-#define arm_start 600
-#define claw_start 1055
-#define claw_close 600
-#define arm_up 0*/
-
-
-void move(int l_speed,int r_speed);/*{
+int white = 1;
+int black = 2;
+int physical = 3;
+double bias = 0.0;
+void move(int l_speed,int r_speed){
     mav(right_motor,r_speed);
     mav(left_motor,l_speed);
-}*/
+}
 
-int white;
-int black;
-int physical;
-int black_speed;
-void square_up(int ending,int speed);/*{
+
+void square_up(int ending,int speed){
     if(speed > 0 && speed < 600){
         black_speed = 1.2*speed;
     }
@@ -118,14 +113,12 @@ void square_up(int ending,int speed);/*{
                 }
             }
     }
-}*/
+}
 
-double bias;
-
-double calibrate_gyro();//{
-    int i;
-    double avg ;
-    /*while( i < 50){
+double calibrate_gyro(){
+    int i = 0;
+    double avg = 0;
+    while( i < 50){
         avg += gyro_z();
         msleep(1);
         i++;
@@ -134,13 +127,13 @@ double calibrate_gyro();//{
     bias = avg / 50.0;
     printf("New Bias: %f\n", bias);
     return bias;
-}*/
+}
 
-void drive_with_gyro(int speed, double time);//{
-    //calibrate_gyro();
-    double startTime;
-    double theta;
-    /*while(seconds() - startTime < time){
+void drive_with_gyro(int speed, double time){
+    calibrate_gyro();
+    double startTime = seconds();
+    double theta = 0;
+    while(seconds() - startTime < time){
         if (theta < 1000 && theta > -1000){
             mav(right_motor, speed);
             mav(left_motor, speed);
@@ -158,13 +151,13 @@ void drive_with_gyro(int speed, double time);//{
         printf("%f",theta);
     }
     ao();
-}*/
+}
 
-void PID_gyro_drive(int speed, double time);//{
-    //calibrate_gyro();
-    double startTime;
-    double theta ;
-    /*while((seconds() - startTime) < time){
+void PID_gyro_drive(int speed, double time){
+    calibrate_gyro();
+    double startTime = seconds();
+    double theta = 0;
+    while((seconds() - startTime) < time){
         if(speed > 0){
             mav(right_motor, (speed - (speed * (theta/100000))));            
             mav(left_motor, (speed + (speed * theta/100000)));
@@ -179,11 +172,12 @@ void PID_gyro_drive(int speed, double time);//{
         theta += (gyro_z() - bias) * 10;
     }
     move(0,0);
-}*/
-void turn_with_gyro_create(int speed, int deg);//{
-    double theta;
+}
+
+void turn_with_gyro_create(int speed, int deg){
+    double theta = 0;
     int targetTheta; 
-    /*switch(deg){
+    switch(deg){
         case 45:
             targetTheta = target_theta_45;
             create_drive_direct(speed,speed*-1);
@@ -217,7 +211,7 @@ void turn_with_gyro_create(int speed, int deg);//{
             create_drive_direct(speed*-1,speed);
             break;
         default:
-            targetTheta=0;
+            targetTheta = 0;
             break;
     }  
     while(theta < targetTheta){
@@ -226,14 +220,13 @@ void turn_with_gyro_create(int speed, int deg);//{
         printf("Turn Gyro Z: %d\n",gyro_z());
     }
     create_drive_direct(0,0);
-}*/
+}
 
-
-void turn_with_gyro(int speed, int deg);//{
-    //calibrate_gyro();
-    double theta ;
+void turn_with_gyro(int speed, int deg){
+    calibrate_gyro();
+    double theta = 0;
     int targetTheta; 
-    /*switch(deg){
+    switch(deg){
         case 45:
             targetTheta = target_theta_45;
             move(speed,speed*-1);
@@ -278,10 +271,10 @@ void turn_with_gyro(int speed, int deg);//{
     mav(right_motor, 0);
     mav(right_motor, 0);
     ao();
-}*/
+}
 
-void backward_linefollow(int distance);
-/*{
+void backward_linefollow(int distance)
+{
     cmpc(0);
     cmpc(2);
     while(gmpc(0)>-distance)
@@ -289,9 +282,10 @@ void backward_linefollow(int distance);
         mav(left_motor,-.55*(analog(back_IR)));
         mav(right_motor,-.55*(3400-analog(back_IR)));
     }
-}*/
-void cube_verify();
-/*{
+}
+
+void cube_verify()
+{
     if(buffer(4)>1600)
     {
         move(-400,-400);
@@ -304,10 +298,4 @@ void cube_verify();
         while(buffer(4)<1400){}
         move(0,0);
     }
-}*/
-
-
-
-
-
-
+}
