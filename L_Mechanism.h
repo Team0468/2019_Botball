@@ -1,13 +1,15 @@
 #define arm 0
 #define hand 1
-#define arm_max 1800
+#define arm_max 1775
 #define arm_min 675
-#define hand_max 1350
-#define hand_min 500
-#define hand_prism 600
+#define hand_max 1250
+#define hand_prism_open 800
+#define hand_min 400
+#define hand_valve 459
+#define hand_prism 500
 #define arm_prism 1480
 #define arm_fire 1150
-
+#define hand_start 912
 
 int down;
 int up ;

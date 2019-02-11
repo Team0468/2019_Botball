@@ -26,7 +26,7 @@
 #define claw_start 1055
 #define claw_close 600
 #define arm_up 0*/
-
+void pvc_backwards_follow();
 
 void move(int l_speed,int r_speed);/*{
     mav(right_motor,r_speed);

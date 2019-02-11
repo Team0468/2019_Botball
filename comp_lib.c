@@ -11,8 +11,9 @@
 #define target_theta_m90 507500
 #define target_theta_m180 1061500
 #define target_theta_m360 2175000
+#define target_theta_building_2 371000
 
-#define analog_white 1300
+#define analog_white 1500
 #define analog_black 3000
 #define digital_right 0
 #define digital_left 1
@@ -178,6 +179,7 @@ void turn_with_gyro_create(int speed, int deg){
     double theta = 0;
     int targetTheta; 
     switch(deg){
+        
         case 45:
             targetTheta = target_theta_45;
             create_drive_direct(speed,speed*-1);
@@ -225,8 +227,13 @@ void turn_with_gyro_create(int speed, int deg){
 void turn_with_gyro(int speed, int deg){
     calibrate_gyro();
     double theta = 0;
+   
     int targetTheta; 
     switch(deg){
+        case 80:
+            targetTheta = target_theta_building_2;
+            move(speed,speed*-1);
+            break;
         case 45:
             targetTheta = target_theta_45;
             move(speed,speed*-1);
@@ -279,8 +286,8 @@ void backward_linefollow(int distance)
     cmpc(2);
     while(gmpc(0)>-distance)
     {
-        mav(left_motor,-.55*(analog(back_IR)));
-        mav(right_motor,-.55*(3400-analog(back_IR)));
+        mav(left_motor,.55*(analog(3)));
+        mav(right_motor,.55*(3400-analog(3)));
     }
 }
 
@@ -289,13 +296,13 @@ void cube_verify()
     if(buffer(4)>1600)
     {
         move(-400,-400);
-        while(buffer(4)>1400){}
+        while(buffer(4)>1460){}
         move(0,0);
     }
     if(buffer(4)<1600)
     {
         move(400,400);
-        while(buffer(4)<1400){}
+        while(buffer(4)<1460){}
         move(0,0);
     }
 }
