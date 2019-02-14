@@ -12,14 +12,23 @@
 #define left 2
 #define right 1*/
 
+#define down 1200
+#define front 1300
+#define closed 600
+
 int up;
-int down;
+//int down;
 int mid;
-int front;
+//int front;
 int back;
 int open;
-int closed;
+//int closed;
 int hand_valve;
+int tight;
+
+int turn;
+int PID;
+int square;
 
 void slow_arm (int x );//this funtion slows 
 void slow_hand (int x );//this funtion slows 
@@ -35,3 +44,7 @@ void slow_arm_up2();
 void slow_hand_open();
 void slow_hand_small_open();
 void slow_arm_down();
+void slow_hand_close();
+void short_pause();
+void slow_arm_bucket();
+void fast_hand();

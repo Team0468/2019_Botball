@@ -4,24 +4,34 @@
 #define arm 2
 #define base 0
 #define arm_max 1200
-#define arm_min 400
-#define arm_mid 790
+#define arm_min 300
+#define arm_mid 600
 #define hand_max 2047 //also start
-#define hand_min 50
+#define hand_min 600
+#define hand_close 330
 #define base_max 1300
 #define base_min 0
 #define base_start 150
 #define left 2
 #define right 1
 
-int up = arm_min;
-int down = arm_max;
-int mid = arm_mid;
-int front = base_max;
-int back = base_min;
-int open = hand_max;
-int closed = hand_min;
-int hand_valve = 0;
+
+/* If you change one of the defines above that matches one below, you must change the other as well */
+
+//#define down 1200
+//int down = down;
+int up = down - 900;
+int mid = down - 600;
+
+//#define front 1300
+//int front = front;
+int back = front - 1300;
+
+//#define closed 600
+//int closed = closed;
+int open = closed + 1447;
+int tight = closed - 270;
+int small_open = closed + 1000;
 
 void slow_arm (int x )//this funtion slows 
 { 
@@ -339,9 +349,9 @@ void slow_hand_open()//this funtion slows
     enable_servo(hand);
     int desired_position;
     int current_position = get_servo_position(hand);
-    if (open > hand_max) {desired_position = hand_max;}
-    else if(open < hand_min) {desired_position = hand_min;}
-    else {desired_position = open;}
+    if (small_open > hand_max) {desired_position = hand_max;}
+    else if(small_open < hand_min) {desired_position = hand_min;}
+    else {desired_position = small_open;}
 
     while(current_position != desired_position)
     {
@@ -357,7 +367,7 @@ void slow_hand_open()//this funtion slows
         }
     }
 
-    set_servo_position (hand, open);
+    set_servo_position (hand, small_open);
     disable_servo (hand);
 }
 
@@ -413,4 +423,91 @@ void slow_arm_down()//this funtion slows
 
     set_servo_position (arm, down);
     disable_servo (arm);
+}
+
+void slow_hand_close()//this funtion slows 
+{ 
+    enable_servo(hand);
+    int desired_position;
+    int current_position = get_servo_position(hand);
+    if (tight > hand_max) {desired_position = hand_max;}
+    else if(tight < hand_min) {desired_position = hand_min;}
+    else {desired_position = tight;}
+
+    while(current_position != desired_position)
+    {
+        if(current_position < desired_position)
+        { current_position=current_position +1;
+         set_servo_position(hand, current_position);
+         msleep(1);
+        }
+        if(current_position > desired_position)
+        { current_position=current_position -1;
+         set_servo_position(hand, current_position);
+         msleep(1);
+        }
+    }
+
+    set_servo_position (hand, tight);
+    disable_servo (hand);
+}
+
+void short_pause(){
+    create_stop();
+    msleep(250);
+}
+
+void slow_arm_bucket()//this funtion slows 
+{ 
+    enable_servo(arm);
+    int desired_position;
+    int current_position = get_servo_position(arm);
+    if (down-500 > arm_max) {desired_position = arm_max;}
+    else if(down-500 < arm_min) {desired_position = arm_min;}
+    else {desired_position = down-500;}
+
+    while(current_position != desired_position)
+    {
+        if(current_position < desired_position)
+        { current_position=current_position +1;
+         set_servo_position(arm, current_position);
+         msleep(2);
+        }
+        if(current_position > desired_position)
+        { current_position=current_position -1;
+         set_servo_position(arm, current_position);
+         msleep(2);
+        }
+    }
+
+    set_servo_position (arm, down-500);
+    disable_servo (arm);
+}
+
+void fast_hand (int x )//this funtion slows 
+{ 
+
+    enable_servo(hand);
+    int desired_position;
+    int current_position = get_servo_position(hand);
+    if (x > hand_max) {desired_position = hand_max;}
+    else if(x < hand_min) {desired_position = hand_min;}
+    else {desired_position = x;}
+
+    while(current_position != desired_position)
+    {
+        if(current_position < desired_position)
+        { current_position=current_position +1;
+         set_servo_position(hand, current_position);
+         msleep(1);
+        }
+        if(current_position > desired_position)
+        { current_position=current_position -1;
+         set_servo_position(hand, current_position);
+         msleep(1);
+        }
+    }
+
+    set_servo_position (hand, x);
+    disable_servo (hand);
 }

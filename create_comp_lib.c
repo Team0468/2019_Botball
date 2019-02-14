@@ -8,6 +8,7 @@
 #define target_theta_180 1095000 // ALL NUMBERS SHOULD BE GOOD
 #define target_theta_01 50000
 #define target_theta_02 1200000
+#define target_theta_03 485000
 int target_theta_m45 = target_theta_45;
 int target_theta_m90 = target_theta_90;
 int target_theta_m180 = target_theta_180; 
@@ -21,6 +22,11 @@ int target_theta_m180 = target_theta_180;
 #define stop 0
 #define cliff 1700
 
+#define hat 0
+
+int turn = 110;
+int square = 200;
+int PID = 150;
 
 void move(l_speed,r_speed){
     mav(right_motor,r_speed);
@@ -206,6 +212,14 @@ void turn_with_gyro_create(int speed, int deg){
             targetTheta = target_theta_02;
             create_drive_direct(speed*-1,speed);
             break;
+        case 03:
+            targetTheta = target_theta_03;
+            create_drive_direct(speed*-1,speed);
+            break;
+        case 04:
+            targetTheta = target_theta_03;
+            create_drive_direct(speed,speed*-1);
+            break;
         default:
             targetTheta = 0;
             break;
@@ -304,39 +318,39 @@ void square_up_front_create(int ending,int speed){
         case 1:
             {
                 while(1){
-                        if(get_create_lfcliff_amt()<cliff && get_create_rfcliff_amt()<cliff){
-                            create_drive_direct(black_speed,black_speed);
-                        }
-                        if(get_create_lfcliff_amt()>cliff){
-                            create_drive_direct(stop,black_speed);
-                        }
-                        if(get_create_rfcliff_amt()>cliff){
-                            create_drive_direct(black_speed,stop);
-                        }
-                        if(get_create_lfcliff_amt()>cliff && get_create_rfcliff_amt()>cliff){
-                            create_drive_direct(stop,stop);
-                            break;
-                        }
+                    if(get_create_lfcliff_amt()<cliff && get_create_rfcliff_amt()<cliff){
+                        create_drive_direct(black_speed,black_speed);
+                    }
+                    if(get_create_lfcliff_amt()>cliff){
+                        create_drive_direct(stop,black_speed);
+                    }
+                    if(get_create_rfcliff_amt()>cliff){
+                        create_drive_direct(black_speed,stop);
+                    }
+                    if(get_create_lfcliff_amt()>cliff && get_create_rfcliff_amt()>cliff){
+                        create_drive_direct(stop,stop);
+                        break;
+                    }
                 }
             }
         case 2:
             {
                 while(1){
-                if(get_create_lfcliff_amt()<cliff && get_create_rfcliff_amt()<cliff){
-                    create_drive_direct(-1*black_speed,-1*black_speed);
-                }
-                if(get_create_lfcliff_amt()>cliff){
-                    create_drive_direct(stop,-1*black_speed);
-                }
-                if(get_create_rfcliff_amt()>cliff){
-                    create_drive_direct(-1*black_speed,stop);
-                }
-                if(get_create_lfcliff_amt()>cliff && get_create_rfcliff_amt()>cliff){
-                    create_drive_direct(stop,stop);
-                    break;
+                    if(get_create_lfcliff_amt()<cliff && get_create_rfcliff_amt()<cliff){
+                        create_drive_direct(-1*black_speed,-1*black_speed);
+                    }
+                    if(get_create_lfcliff_amt()>cliff){
+                        create_drive_direct(stop,-1*black_speed);
+                    }
+                    if(get_create_rfcliff_amt()>cliff){
+                        create_drive_direct(-1*black_speed,stop);
+                    }
+                    if(get_create_lfcliff_amt()>cliff && get_create_rfcliff_amt()>cliff){
+                        create_drive_direct(stop,stop);
+                        break;
+                    }
                 }
             }
-        }
     }
 }
 
@@ -412,4 +426,54 @@ void square_up_back_create(int ending,int speed){
 
             }
     }
+}
+
+void turn_90(){
+    double theta = 0;
+    int targetTheta = target_theta_90; 
+
+    create_drive_direct(60,60*-1);
+    while(theta < targetTheta){
+        msleep(10);
+        theta += abs(gyro_z() - bias) * 10;
+        printf("Turn Gyro Z: %d\n",gyro_z());
+    }
+    create_drive_direct(0,0);
+}
+
+void reach_material(){
+        while(get_create_rclightbump_amt() < 500){
+        if (get_create_rfcliff_amt() < 1600){
+            create_drive_direct(75,150);
+        }
+        else{
+            create_drive_direct(150,75);
+        }
+        msleep(15);
+    }
+    while(1){
+        if(get_create_rclightbump_amt() > 500){
+            create_drive_direct(-11,-11);
+        }
+        if(get_create_rclightbump_amt() < 500){
+            break;
+        }
+    }
+    while(1){
+        if(get_create_rclightbump_amt() < 500){
+            create_drive_direct(11,11);
+        }
+        if(get_create_rclightbump_amt() > 500){
+            break;
+        }
+    }
+    while(1){
+        if(get_create_rclightbump_amt() > 500){
+            create_drive_direct(-11,-11);
+        }
+        if(get_create_rclightbump_amt() < 500){
+            break;
+        }
+    }
+    printf("AVG BUMP: %d\n", get_create_rclightbump_amt());
 }

@@ -34,3 +34,5 @@ void square_up_front_create(int ending,int speed);
 //switch(ending);
 void linefollow_create(int speed);
 void square_up_back_create(int ending,int speed);
+void turn_90();
+void reach_material();
