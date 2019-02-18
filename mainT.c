@@ -2,38 +2,47 @@
 #include </home/root/Documents/KISS/Default User/tournament_file_Bot_A/include/comp_lib.h>
 #include </home/root/Documents/KISS/Default User/tournament_file_Bot_A/include/L_Mechanism.h>
 #include <camera_2019.h>
+//#include <threads.h>
 
 
 int main()
 {
-
-    int burning_building = 2;   //|defined by camera for which building
-    int target = buffer(4);
+	//thread slowArmUp;
+    //slowArmUp = thread_create(slow_arm_thread(up, slow));
+    int burning_building = position_camera();   //|defined by camera for which building
+    int target = buffer(ET);
     slow_hand(hand_start,fast);
+    slow_arm(down,fast);
+    slow_hand(open,fast);
+    
+    msleep(2000);
     if(analog(0) || analog(1) < white)
     { //| verifys IR sensor are working
-
-        slow_arm(prism2,slow);
-        PID_gyro_drive(-600 * multiplier, .35 / multiplier); //|physical square up
-        PID_gyro_drive(600 * multiplier, .35 / multiplier);  
-        move(600,625);                                       //| verify firefighter is in reach
-        while(buffer(4) <= 2000){}                           //|
+        int burning_building = position_camera;
+        slow_arm(prism2,slow);  
+        move(625,600);                                       //| verify firefighter is in reach
+        while(buffer(ET) <= 1900){}                           //|
 
 
         move(0,0);                 //| begin grabbing cube
+       
         slow_hand(open,slow);
         slow_arm(down,slow);
         slow_hand(closed,fast);
+        slow_arm(up,fast);
         msleep(500);
-        slow_arm(up,slow);         //|end of cube grab
-        PID_gyro_drive(600 * multiplier,1.65/ multiplier);  //| begin driving to prism
+        //slow_arm(up,slow);   
+        move(630,600);//|end of cube grab
+        //thread_destroy(slowArmup);
+        PID_gyro_drive(600*multiplier,1.6/multiplier);//| begin driving to prism
         turn_with_gyro(450 * multiplier,-90);
-        square_up(black,200 * multiplier);                                                   
+        square_up(2,250 * multiplier);                                                   
         move(0,0);                                           //| leave starting box
         msleep(150);
-        move(633,600);
-        while(buffer(4)<1425){}                              //| 
-        cube_verify();										 //|----->prism verify for cube drop
+        cmpc(right_motor);
+        cmpc(left_motor);
+        PID_gyro_drive_distance(500*multiplier,1350);                            //| 
+       										 //|----->prism verify for cube drop
         ao();												 //|
 
         slow_arm(prism2,slow);                               //| cube drop
@@ -44,7 +53,7 @@ int main()
         PID_gyro_drive(600 * multiplier,.75 / multiplier);
         slow_hand(prism,slow);
         msleep(200);                                         //| both in grasp
-        PID_gyro_drive(-500 * multiplier,.30 /multiplier);   //|this is the end of start with firefighter and truck
+        PID_gyro_drive(-300 * multiplier,.30 /multiplier);   //|this is the end of start with firefighter and truck
         if(burning_building == 1)                            //|beginning of cases
         {
             turn_with_gyro(400 * multiplier,45);
@@ -72,23 +81,30 @@ int main()
             msleep(1000);
             move(0,0);
             msleep(500);
-            PID_gyro_drive(600*multiplier,2/multiplier);     //|stopped right before linefollow
+            PID_gyro_drive(600*multiplier,2/multiplier);    //|stopped right before linefollow
 
 
 
 
         }
-        else if(burning_building==2)
+        else
         {
 
-            turn_with_gyro(400 * multiplier,80);
+            turn_with_gyro(400 * multiplier,90);
+            move(0,0);
+            msleep(100);
+            square_up(2,600*multiplier);
+            move(0,0);
+            msleep(100);
+            turn_with_gyro(400*multiplier,-45);
+            move(0,0);
+            msleep(100);
+            PID_gyro_drive(600*multiplier,3/multiplier);
             //msleep(250);
             //move(300,-300);
             //msleep(590);
-            move(0,0);
-            msleep(100);
-            move(630,600);
-            msleep(7500);
+            
+            
             move(0,0);                                           //|at second building
             ao();
             slow_hand(hand_prism_open,fast);
@@ -96,11 +112,9 @@ int main()
             slow_arm(prism2,fast);
             slow_hand(closed,fast);
             slow_arm(up,fast);                                   //| just cube in hand prism in place
-            move(-155,155);
-            msleep(1350);
-            move(0,0);
-            move(600,600);
-            msleep(500);
+            
+            
+            
             move(0,0);
             slow_arm(arm_fire,fast);
             slow_hand(open,fast);                                //| blocks in place for firefighter
@@ -109,7 +123,7 @@ int main()
 
 
         }                                                        //| end of second case
-        while(buffer(4)<1450){//| verify                         //| setting up for gas valve
+        while(buffer(ET)<1440){//| verify                         //| setting up for gas valve
             mav(left_motor,.35*(analog(3)));
             mav(right_motor,.35*(3400-analog(3)));
 
@@ -117,16 +131,16 @@ int main()
         move(0,0);
         slow_arm(prism2,fast);
         PID_gyro_drive(-600*multiplier,1/multiplier);
-        while(buffer(4)<1450){   //valve 2nd verify
+        while(buffer(ET)<1440){   //valve 2nd verify
             mav(left_motor,.35*(analog(3)));
             mav(right_motor,.35*(3400-analog(3)));
 
         }
-        while(buffer(4) != 1475){ //| start of setup for blue linefollow
-            if(buffer(4)<1475){   
+        while(buffer(ET) != 1465){ //| start of setup for blue linefollow
+            if(buffer(ET)<1475){   
                 move(600,600);    
             }
-            else if(buffer(4)>1475){
+            else if(buffer(ET)>1455){
                 move(-600,-600);
             }
             else{
@@ -140,11 +154,11 @@ int main()
         msleep(250);              //|
         slow_arm(up,slow);        //|
 
-        while(buffer(4) != 2900){ //| start of setup for blue linefollow
+        /*while(buffer(ET) != 2900){ //| start of setup for blue linefollow
             if(buffer(4)<2850){   
                 move(600,600);    
             }
-            else if(buffer(4)>2950){
+            else if(buffer(ET)>2950){
                 move(-600,-600);
             }
             else{
@@ -156,15 +170,16 @@ int main()
         PID_gyro_drive(-600*multiplier,.35/multiplier);
         square_up(white,300*multiplier); //| end of setup
 
-        move(-725,-600);                 //| 
+       /* move(-725,-600);                 //| 
         while(digital(0)!= 1){           //| this is arc until physical is on
             //| and exits to physical linefollow
         }                                //|
-        cmpc(1);
-        cmpc(2);
-        pvc_backwards_follow(); //| physical linefollow
-
+        
+       
+            pvc_backwards_follow(); //| physical linefollow*/
+        
     }
-    
+	printf("x_Accel: %d", min_accel_x);
+    printf("y_Accel: %d", max_accel_y);
     return 0;
 }

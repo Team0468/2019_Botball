@@ -1,7 +1,9 @@
 #include <kipr/botball.h>
 #include <camera_2019.h>
 #define camera 0
-
+void takeBuildingPic();
+int building1 = 0;
+int building2 = 0;
 int position_camera(){
     // This function was developed and written by Ryan P. Webb
     camera_open_black();
@@ -23,27 +25,39 @@ int position_camera(){
         motor(camera, -10);
     }
     freeze(camera);
-    int i = 0;
-    int building1 = 0;
-    int building2 = 0;
-    while(i < 50){
-        camera_update();
-        if(get_object_center_x(0,0) < 90){
-            building1 += 1;
-        }else if(get_object_center_x(0,0) > 90){
-            building2 += 2;   
-        }
-        i++;
-    }
-    if (building2 > building1){
+    
+    thread building;
+    building = thread_create(takeBuildingPic);
+    thread_start(building);
+    wait_for_light(3);
+    thread_destroy(building);
+    takeBuildingPic();
+    if (building1 > building2){
         camera_close();
-        return 2;
+        return 1;
     }else{
         camera_close();
-     	return 1;   
+        return 2;   
     }
 
     camera_close();
     printf("Building: %d\n", burning_building);
     return 0;
+}
+void takeBuildingPic(){
+    int i = 0;
+    building1 = 0;
+    building2 = 0;
+    while(1){
+        while(i < 50){
+            camera_update();
+            if(get_object_center_x(0,0) < 90){
+                building1 += 1;
+            }else if(get_object_center_x(0,0) > 90){
+                building2 += 2;   
+            }
+            i++;
+        }
+        msleep(5000);
+    }
 }

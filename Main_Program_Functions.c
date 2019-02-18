@@ -19,17 +19,31 @@
 }*/
 
 void pvc_backwards_follow(){
-    //function developed and written by Ryan P. Webb
+    //function developed and written by Ryan P. Webb & Treyton J. Ross
     move(-800, -800);
     msleep(500);
     ao();
     cmpc(1);
     cmpc(2);
-    while(gmpc(left_motor) < 4000){
-        if(digital(0) == 1){
-            move(-800, -1000);
-        }else{
-            move(-1000, -800);
+    int min_accel_x = 55;
+    int max_accel_y = 5;
+    while(gmpc(left_motor) > -8000){
+        if(accel_x() < min_accel_x){
+            min_accel_x = accel_x();
+        }
+        if(accel_y() > max_accel_y){
+            max_accel_y = accel_y();
+        }
+        if(accel_x() < -30){
+            move(800,800);
+        }
+        else{
+        	if(digital(0) == 1){
+            	move(-800, -1000);
+        	}
+            else{
+            	move(-1000, -800);
+        	}
         }
     }
     ao();

@@ -10,16 +10,17 @@
 #define target_theta_m180 1061500
 #define target_theta_m360 2175000
 
-#define analog_white 1300
-#define analog_black 3000
+#define analog_white 2500
+#define analog_black 3800
 #define digital_right 0
 #define digital_left 1
 #define left_IR 1
 #define right_IR 0
 #define stop 0
 #define multiplier 1.3
-#define back_IR 5
-
+#define ET 5
+int min_accel_x;
+    int max_accel_y;
 /*#define arm 0
 #define claw 1
 #define arm_start 600

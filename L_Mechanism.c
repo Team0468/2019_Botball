@@ -26,7 +26,7 @@ int buffer(int sensor)
  i = 0;
  while(i<5){
      i = i+1;
-     total = total + analog(4);
+     total = total + analog(sensor);
      msleep(1);}
  return(total/5);
 }

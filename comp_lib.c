@@ -13,15 +13,15 @@
 #define target_theta_m360 2175000
 #define target_theta_building_2 371000
 
-#define analog_white 1500
-#define analog_black 3000
+#define analog_white 2500
+#define analog_black 3800
 #define digital_right 0
 #define digital_left 1
 #define left_IR 1
 #define right_IR 0
 #define stop 0
 #define multiplier 1.3
-#define back_IR 5
+#define ET 5
 
 int white = 1;
 int black = 2;
@@ -179,7 +179,7 @@ void turn_with_gyro_create(int speed, int deg){
     double theta = 0;
     int targetTheta; 
     switch(deg){
-        
+
         case 45:
             targetTheta = target_theta_45;
             create_drive_direct(speed,speed*-1);
@@ -227,7 +227,7 @@ void turn_with_gyro_create(int speed, int deg){
 void turn_with_gyro(int speed, int deg){
     calibrate_gyro();
     double theta = 0;
-   
+
     int targetTheta; 
     switch(deg){
         case 80:
@@ -293,16 +293,56 @@ void backward_linefollow(int distance)
 
 void cube_verify()
 {
-    if(buffer(4)>1600)
+    if(buffer(ET)>1600)
     {
         move(-400,-400);
-        while(buffer(4)>1460){}
+        while(buffer(ET)>1460){}
         move(0,0);
     }
-    if(buffer(4)<1600)
+    if(buffer(ET)<1600)
     {
         move(400,400);
-        while(buffer(4)<1460){}
+        while(buffer(ET)<1460){}
         move(0,0);
     }
 }
+void PID_gyro_drive_distance(int speed,int distance)
+{
+    calibrate_gyro();
+
+    double theta = 0;
+    while(buffer(ET)<(distance-30) || buffer(ET)>(distance + 30))
+    {
+        if(buffer(ET) < distance)
+        {
+            if(speed > 0){
+                mav(right_motor, (speed - (speed * (theta/100000))));            
+                mav(left_motor, (speed + (speed * theta/100000)));
+            }
+
+
+            else{
+                mav(left_motor, (speed - (speed * theta/100000)));            
+                mav(right_motor, (speed + (speed * (theta/100000))));
+            }
+        }
+        if(buffer(ET) > distance)
+        {
+            if(speed > 0){
+                mav(right_motor, (speed + (speed * (theta/100000))));            
+                mav(left_motor, (speed - (speed * theta/100000)));
+            }
+
+
+            else{
+                mav(left_motor, (speed + (speed * theta/100000)));            
+                mav(right_motor, (speed - (speed * (theta/100000))));
+            }
+        }
+        msleep(10);
+        theta += (gyro_z() - bias) * 10;
+    }
+    move(0,0);
+}
+
+
