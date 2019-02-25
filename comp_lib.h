@@ -9,9 +9,12 @@
 #define target_theta_m90 507500
 #define target_theta_m180 1061500
 #define target_theta_m360 2175000
-
-#define analog_white 2500
-#define analog_black 3800
+#define target_theta_building 260000
+#define target_theta_building_2 260000
+//#define analog_white 2500
+int analog_white;
+int analog_black;
+//#define analog_black 3800
 #define digital_right 0
 #define digital_left 1
 #define left_IR 1
@@ -19,6 +22,7 @@
 #define stop 0
 #define multiplier 1.3
 #define ET 5
+
 int min_accel_x;
     int max_accel_y;
 /*#define arm 0
@@ -306,6 +310,11 @@ void cube_verify();
         move(0,0);
     }
 }*/
+
+void PID_gyro_drive_distance(int speed, int distance);
+
+
+void calibration_square();
 
 
 

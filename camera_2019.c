@@ -25,26 +25,27 @@ int position_camera(){
         motor(camera, -10);
     }
     freeze(camera);
-    
-    thread building;
-    building = thread_create(takeBuildingPic);
+
+    //thread building;
+    /*building = thread_create(takeBuildingPic);
     thread_start(building);
     wait_for_light(3);
-    thread_destroy(building);
-    takeBuildingPic();
-    if (building1 > building2){
+    thread_destroy(building);*/
+    /*if (building1 > building2){
         camera_close();
         return 1;
     }else{
         camera_close();
         return 2;   
-    }
+    }*/
 
     camera_close();
-    printf("Building: %d\n", burning_building);
+    //printf("Building: %d\n", burning_building);
     return 0;
 }
 void takeBuildingPic(){
+    // This function was written and developed by Ryan P. Webb
+    camera_open_black();
     int i = 0;
     building1 = 0;
     building2 = 0;
@@ -58,6 +59,22 @@ void takeBuildingPic(){
             }
             i++;
         }
+        if (building1 > building2){
+            building = 1;
+        }else{
+            building = 2;   
+        }
+        printf("Building: %d\n",building);
         msleep(5000);
     }
+    camera_close();
+}
+void waitingForLight(){
+    //This function was written and developed by Ryan P. Webb
+    thread building;
+    building = thread_create(takeBuildingPic);
+    thread_start(building);
+    wait_for_light(3);
+    thread_destroy(building);
+    camera_close();
 }

@@ -1,33 +1,15 @@
-#define arm 0
-#define hand 1
-#define arm_max 1775
-#define arm_min 675
-#define hand_max 1250
-#define hand_prism_open 800
-#define hand_min 400
-#define hand_valve 459
-#define hand_prism 500
-#define arm_prism 1480
-#define arm_fire 1150
-#define hand_start 912
+//#define arm 0
+//#define hand 1
+#define fast 1
+#define slow 2
 
-int down;
-int up ;
-int open;
-int closed;
-int block;
-int prism;
-int prism2;
+
+
 
 //int arm_building == up + 200;
 
-int slow;
-int fast;
-int hand_fully_closed;
-int hand_bulldoze;
-int arm_fully_up;
-int arm_bulldoze;
-int arbitrary_arm_position;
+
+
 
 int slow_arm (int x,int speed);//this funtion slows 
 /*{ 

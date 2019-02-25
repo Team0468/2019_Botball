@@ -1,27 +1,14 @@
+
 #include <kipr/botball.h>
 #include <comp_lib.h>
+#include <L_Mechanism.h>
+#include <arm_hand_position.h>
 
-#define right_motor 1
-#define left_motor 2
-#define target_theta_45 225000 //numbers for wallaby-4188
-#define target_theta_90 507500
-#define target_theta_180 1061500
-#define target_theta_360 2175000
-#define target_theta_m45 225000
-#define target_theta_m90 507500
-#define target_theta_m180 1061500
-#define target_theta_m360 2175000
-#define target_theta_building_2 371000
 
-#define analog_white 2500
-#define analog_black 3800
-#define digital_right 0
-#define digital_left 1
-#define left_IR 1
-#define right_IR 0
-#define stop 0
-#define multiplier 1.3
-#define ET 5
+ 
+
+
+int grey;
 
 int white = 1;
 int black = 2;
@@ -311,38 +298,36 @@ void PID_gyro_drive_distance(int speed,int distance)
     calibrate_gyro();
 
     double theta = 0;
-    while(buffer(ET)<(distance-30) || buffer(ET)>(distance + 30))
+    while(buffer(ET)< (distance-30) || buffer(ET)>(distance + 30))
     {
         if(buffer(ET) < distance)
         {
-            if(speed > 0){
                 mav(right_motor, (speed - (speed * (theta/100000))));            
                 mav(left_motor, (speed + (speed * theta/100000)));
-            }
-
-
-            else{
-                mav(left_motor, (speed - (speed * theta/100000)));            
-                mav(right_motor, (speed + (speed * (theta/100000))));
-            }
         }
-        if(buffer(ET) > distance)
+       else
         {
-            if(speed > 0){
-                mav(right_motor, (speed + (speed * (theta/100000))));            
-                mav(left_motor, (speed - (speed * theta/100000)));
-            }
-
-
-            else{
-                mav(left_motor, (speed + (speed * theta/100000)));            
-                mav(right_motor, (speed - (speed * (theta/100000))));
-            }
+            
+                mav(right_motor, -20);            
+                mav(left_motor,-20);
         }
         msleep(10);
+        printf("%d/n",buffer(ET));
         theta += (gyro_z() - bias) * 10;
     }
     move(0,0);
 }
 
-
+void calibration_square(){
+    
+     analog_white = (analog(0)+analog(1))/2;
+    while((analog(0)-white)1100||(analog(1)-white)<1100){
+        
+        move(600,600);
+        move(600,600);
+        printf("%d\n",analog(1));
+    }
+    ao();
+    analog_black = (analog(0)+analog(1))/2;
+    grey = (analog_white + analog_black)/2;
+}

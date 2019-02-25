@@ -1,23 +1,11 @@
 #include <kipr/botball.h> 
 #include <L_Mechanism.h>
+#include <arm_hand_position.h>
+#include <comp_lib.h>
 
 
-int down = arm_max;
-int up = arm_min;
-int open = hand_max;
-int closed = hand_min;
-int block = hand_min;
-int prism = hand_prism;
-int prism2 = arm_prism;
-//int arm_building == up + 200;
 
-int slow = 2;
-int fast = 1;
-int hand_fully_closed = hand_min;
-int hand_bulldoze = hand_max;
-int arm_fully_up = arm_min;
-int arm_bulldoze = arm_max;
-int arbitrary_arm_position = arm_max - 100;
+
 
 int total;
 int i;
