@@ -17,6 +17,7 @@
 #define closed 600
 
 int up;
+int arm_water;
 //int down;
 int mid;
 //int front;
@@ -25,6 +26,7 @@ int open;
 //int closed;
 int hand_valve;
 int tight;
+int tightish;
 
 int turn;
 int PID;
@@ -48,3 +50,13 @@ void slow_hand_close();
 void short_pause();
 void slow_arm_bucket();
 void fast_hand();
+void shake_arm();
+void grab_water();
+void pile_water();
+void push_water();
+void recover_water();
+void first_water();
+void all_water();
+void first_water_down();
+void all_water_drop();
+void shake_arm_bucket();

@@ -1,5 +1,6 @@
 #include <kipr/botball.h>
 #include <create_functions.h>
+#include <create_comp_lib.h>
 #define hand 3
 #define arm 2
 #define base 0
@@ -22,6 +23,7 @@
 //int down = down;
 int up = down - 900;
 int mid = down - 600;
+int arm_water = down - 400;
 
 //#define front 1300
 //int front = front;
@@ -32,6 +34,7 @@ int back = front - 1300;
 int open = closed + 1447;
 int tight = closed - 270;
 int small_open = closed + 1000;
+int tightish = closed - 75;
 
 void slow_arm (int x )//this funtion slows 
 { 
@@ -118,7 +121,6 @@ void slow_base (int x )//this funtion slows
 }
 
 void start_position(){
-    slow_hand(closed);
     slow_arm(up);
     slow_base(back);
     slow_arm(mid);
@@ -484,6 +486,18 @@ void slow_arm_bucket()//this funtion slows
     disable_servo (arm);
 }
 
+void shake_arm(){
+    enable_servos(arm);
+    int i = 0;
+    while(i < 30){
+        set_servo_position(arm,down-325);
+        msleep(30);
+        set_servo_position(arm,down-250);
+        msleep(30);
+        i=i+1;
+    }
+}
+
 void fast_hand (int x )//this funtion slows 
 { 
 
@@ -494,20 +508,166 @@ void fast_hand (int x )//this funtion slows
     else if(x < hand_min) {desired_position = hand_min;}
     else {desired_position = x;}
 
-    while(current_position != desired_position)
+    while(current_position >= desired_position+2 || current_position <= desired_position-2)
     {
         if(current_position < desired_position)
-        { current_position=current_position +1;
+        { current_position=current_position +2;
          set_servo_position(hand, current_position);
-         msleep(1);
+         msleep(2);
         }
         if(current_position > desired_position)
-        { current_position=current_position -1;
+        { current_position=current_position -2;
          set_servo_position(hand, current_position);
-         msleep(1);
+         msleep(2);
         }
     }
 
     set_servo_position (hand, x);
     disable_servo (hand);
+}
+
+void grab_water(){
+    
+    thread ad;
+    thread hc;
+    
+    ad = thread_create(slow_arm_down);
+    hc = thread_create(slow_hand_close);
+    
+    turn_with_gyro_create(turn,-90);
+    short_pause();
+    thread_start(ad);
+    fast_hand(open);
+    short_pause();
+    thread_start(hc);
+    square_up_front_create(white,square);
+    short_pause();
+    PID_gyro_drive_create(PID-50,0.475);
+    create_stop();
+    msleep(900);
+    slow_arm(down-250);
+    PID_gyro_drive_create(-(PID*2),1);
+    square_up_front_create(black,square);
+	short_pause();
+    turn_with_gyro_create(turn,90);
+    short_pause();
+    
+    thread_destroy(ad);
+    thread_destroy(hc);
+}
+
+void pile_water(int x){
+    fast_hand(closed+x);
+    shake_arm();
+    fast_hand(open);
+    slow_arm(down);
+}
+
+void push_water(){
+    
+    thread ab;
+    
+    ab = thread_create(slow_arm_bucket);
+    
+    PID_gyro_drive_create(PID,3.0);
+    thread_start(ab);
+    PID_gyro_drive_create(-PID,0.7);
+    create_stop();
+    msleep(650);
+    
+    thread_destroy(ab);
+}
+
+void recover_water(){
+    PID_gyro_drive_create(-(PID*2),0.5);
+    slow_arm(down);
+    PID_gyro_drive_create(PID*2,0.35);
+    fast_hand(closed);
+    PID_gyro_drive_create(-(PID*2),0.35);
+    slow_arm(arm_water);
+    PID_gyro_drive_create(PID*2,0.5);
+    fast_hand(open);
+}
+
+void first_water(){
+    
+    thread ad2;
+    thread hc2;
+    
+    ad2 = thread_create(slow_arm_down);
+    hc2 = thread_create(slow_hand_close);
+    
+    square_up_back_create(black,square);
+    PID_gyro_drive_create(-PID,0.80);
+	short_pause();
+    turn_with_gyro_create(turn,90);
+    short_pause();
+    thread_start(ad2);
+	PID_gyro_drive_create(-(PID*2),0.75);
+    thread_start(hc2);
+    square_up_front_create(white,square);
+    short_pause();
+    PID_gyro_drive_create(PID-50,0.475);
+    create_stop();
+    msleep(900);
+    slow_arm(down-300);
+    PID_gyro_drive_create(-(PID*2),1);
+    square_up_front_create(black,square);
+	short_pause();
+    turn_with_gyro_create(turn,90);
+    short_pause();
+    
+    thread_destroy(ad2);
+    thread_destroy(hc2);
+}
+
+void all_water(){
+    PID_gyro_drive_create(PID*2,1.5);
+    short_pause();
+    PID_gyro_drive_create(-PID,0.4);
+    fast_hand(tightish);
+    short_pause();
+}
+
+void first_water_down(){
+    
+    thread ab2;
+    
+    ab2 = thread_create(slow_arm_bucket);
+    
+    PID_gyro_drive_create(PID,2.3);
+    slow_arm(down-250);
+    fast_hand(closed+700);
+    shake_arm();
+    thread_start(ab2);
+    create_stop();
+    msleep(650);
+    
+    thread_destroy(ab2);
+}
+
+void all_water_drop(){
+    PID_gyro_drive_create(-(PID*2),1.25);
+    short_pause();
+    turn_with_gyro_create(turn,-90);
+    PID_gyro_drive_create(-(PID*4/3),2);
+    PID_gyro_drive_create(PID,0.3);
+    short_pause();
+    turn_with_gyro_create(turn,90);
+    slow_arm(arm_water);
+    square_up_front_create(black,square);
+    turn_with_gyro_create(turn-50,01);
+    fast_hand(open);
+}
+
+void shake_arm_bucket(){
+    enable_servos(arm);
+    int i = 0;
+    while(i < 30){
+        set_servo_position(arm,down-400);
+        msleep(30);
+        set_servo_position(arm,down-475);
+        msleep(30);
+        i=i+1;
+    }
 }

@@ -6,7 +6,7 @@
 #define target_theta_45 265000
 #define target_theta_90 507500 // WORKING ON NUMBERS FOR 4184
 #define target_theta_180 1095000 // ALL NUMBERS SHOULD BE GOOD
-#define target_theta_01 50000
+#define target_theta_01 140000
 #define target_theta_02 1200000
 #define target_theta_03 485000
 int target_theta_m45 = target_theta_45;
@@ -206,7 +206,7 @@ void turn_with_gyro_create(int speed, int deg){
             break;
         case 01:
             targetTheta = target_theta_01;
-            create_drive_direct(speed*-1,speed);
+            create_drive_direct(speed,speed*-1);
             break;
         case 02:
             targetTheta = target_theta_02;
@@ -441,9 +441,48 @@ void turn_90(){
     create_drive_direct(0,0);
 }
 
+int bump = 100;
+
 void reach_material(){
-        while(get_create_rclightbump_amt() < 500){
-        if (get_create_rfcliff_amt() < 1600){
+        while(get_create_lclightbump_amt() < bump || get_create_llightbump_amt() < bump){
+        if (get_create_lfcliff_amt() < 1600){
+            create_drive_direct(50,100);
+        }
+        else{
+            create_drive_direct(100,50);
+        }
+        msleep(15);
+    }
+    while(1){
+        if(get_create_lclightbump_amt() > bump){
+            create_drive_direct(-11,-11);
+        }
+        if(get_create_lclightbump_amt() < bump){
+            break;
+        }
+    }
+    while(1){
+        if(get_create_lclightbump_amt() < bump){
+            create_drive_direct(11,11);
+        }
+        if(get_create_lclightbump_amt() > bump){
+            break;
+        }
+    }
+    while(1){
+        if(get_create_lclightbump_amt() > bump){
+            create_drive_direct(-11,-11);
+        }
+        if(get_create_lclightbump_amt() < bump){
+            break;
+        }
+    }
+    printf("AVG BUMP: %d\n", get_create_lclightbump_amt());
+}
+
+void create_line_follow(int dist){
+        while (get_create_distance() < dist){
+        if (get_create_lfcliff_amt() < 1600){
             create_drive_direct(75,150);
         }
         else{
@@ -451,29 +490,4 @@ void reach_material(){
         }
         msleep(15);
     }
-    while(1){
-        if(get_create_rclightbump_amt() > 500){
-            create_drive_direct(-11,-11);
-        }
-        if(get_create_rclightbump_amt() < 500){
-            break;
-        }
-    }
-    while(1){
-        if(get_create_rclightbump_amt() < 500){
-            create_drive_direct(11,11);
-        }
-        if(get_create_rclightbump_amt() > 500){
-            break;
-        }
-    }
-    while(1){
-        if(get_create_rclightbump_amt() > 500){
-            create_drive_direct(-11,-11);
-        }
-        if(get_create_rclightbump_amt() < 500){
-            break;
-        }
-    }
-    printf("AVG BUMP: %d\n", get_create_rclightbump_amt());
 }
