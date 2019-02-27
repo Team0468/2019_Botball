@@ -18,6 +18,7 @@
 
 int up;
 int arm_water;
+int arm_building;
 //int down;
 int mid;
 //int front;

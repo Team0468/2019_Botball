@@ -19,8 +19,6 @@ thread arm_bucket;
 
 int main()
 {
-    calibrate_gyro();
-
     baseback = thread_create(slow_base_valve);
     //startpos = thread_create(slow_start);
     pre_valve = thread_create(slow_arm_up2);
@@ -32,14 +30,13 @@ int main()
     hand_close = thread_create(slow_hand_close);
     raise_arm = thread_create(slow_arm_up);
     arm_bucket = thread_create(slow_arm_bucket);
-
-    start_position();
-
-    create_stop();
-    msleep(2000);
     
+    start_position();
+    calibrate_gyro();
+
     create_connect();
-    //wait_for_light(0);
+    wait_for_light(0);
+    shut_down_in(119);
     
     // MATERIALS AND FIRST WATER
 
@@ -47,7 +44,7 @@ int main()
     square_up_front_create(white,-square); //
     short_pause();                         //
     thread_start(drop_valve);              // LEAVE BASE AND TURN
-    PID_gyro_drive_create(-(PID-75),0.65); //
+    PID_gyro_drive_create(-(PID-75),0.5);  //
     turn_with_gyro_create(turn+10,90);     //
     short_pause();                         ///
 
@@ -55,12 +52,19 @@ int main()
     PID_gyro_drive_create(-PID,0.6);     // SQUARE UP
     short_pause();                       // 
     thread_start(hand_close);            // GRAB MATERIALS
-    PID_gyro_drive_create(PID-40,1.175); //
+    PID_gyro_drive_create(PID-40,1.3);   //
     create_stop();                       // 
     msleep(1500);                        /// 
+    //slow_arm(down-125);
 
     turn_with_gyro_create(turn+10,-90); ///
-    fast_hand(open);                    /// DROP OFF MATERIALS IN BASE 
+    short_pause();
+    slow_arm(down-125);
+    PID_gyro_drive_create(PID+50,1);
+    slow_arm(down);
+    fast_hand(open);                    /// DROP OFF MATERIALS IN BASE
+    slow_arm(down-125);
+    PID_gyro_drive_create(-(PID+50),1);
 
     thread_start(raise_arm);            ///
     PID_gyro_drive_create(-PID,1);      //
@@ -81,54 +85,67 @@ int main()
     short_pause();                       ///
 
     thread_start(arm_bucket);            ///
-	PID_gyro_drive_create(-(PID+100),2); //
+	PID_gyro_drive_create(-(PID+100),2.25); //
     short_pause();                       // PHYSICAL SQUARE UP AND TURN TO BUCKET
     PID_gyro_drive_create(PID,0.5);      //
     turn_with_gyro_create(turn+10,45);   ///
 
     fast_hand(closed+700);            ///
     shake_arm_bucket();               //
-    fast_hand(open);
+    fast_hand(open);                  //
     slow_arm(down);                   // DROP WATER IN BUCKET AND WRAP AROUND BUCKET
     thread_start(hand_close);         //
-    PID_gyro_drive_create(PID,0.35);  //
+    PID_gyro_drive_create(PID,0.45);  //
     create_stop();                    //
     msleep(1000);                     //
     PID_gyro_drive_create(-PID,0.5);  ///
 
     turn_with_gyro_create(turn+10,45);  ///
     thread_start(raise_arm);            // MOVE BUCKET TO CORNER AND MOVE OUT OF WAY
-    fast_hand(closed+700);              ///
+    fast_hand(open);                    ///
     
-    turn_with_gyro_create(turn,-90);
-    PID_gyro_drive_create(-(PID),1);
-    short_pause();
-    PID_gyro_drive_create(PID,0.5);
-    turn_with_gyro_create(turn,-90);
-    PID_gyro_drive_create(PID,1);
-	square_up_front_create(square,black);
-    short_pause();
-    PID_gyro_drive_create(PID,0.75);
-    thread_start(arm_down);
-    turn_with_gyro_create(turn,90);
-    thread_start(hand_close);
-    square_up_front_create(square,black);
-    
-    /*    turn_with_gyro_create(turn+30,-90);  ///
+    turn_with_gyro_create(turn+30,-90);  ///
     PID_gyro_drive_create(PID+125,1.5);  // 
     square_up_back_create(white,square); // PREPARE FOR NEXT MATERIALS
 	short_pause();                       //
-	PID_gyro_drive_create(PID,0.3);      //   maybe keep this line
-    turn_with_gyro_create(turn+30,-90);  ///                               */
+    PID_gyro_drive_create(PID,0.3);
+    short_pause();
     
+    //thread_start(arm_down);
+    turn_with_gyro_create(turn+30,-90);  ///
+    slow_arm(down);
+    thread_start(hand_close);
+    PID_gyro_drive_create(PID+50,0.85);
+    create_stop();
+    msleep(1000);
+    turn_with_gyro_create(turn,-45);
     
+    PID_gyro_drive_create(PID,1.2);
+    fast_hand(open);
+    thread_start(arm_bucket);
+    square_up_back_create(black,-square);
+    PID_gyro_drive_create(-PID,0.5);
+    square_up_back_create(white,square);
+    short_pause();
+    turn_with_gyro_create(turn,90);
     
+    // BULLDOZING MATERIALS #3 AND #4
+    
+    thread_start(arm_down);
+    short_pause();
+    create_line_follow(825);
+    short_pause();
+    PID_gyro_drive_create(-PID,0.825);
+    fast_hand(closed);
+    slow_arm(up);
+    create_line_follow(250);
+    square_up_back_create(black,square);
+    PID_gyro_drive_create(-PID,0.75);
+    slow_arm(arm_building);
+    fast_hand(open);
 
     // WORKING ON GRABBING WATERS
 
-    /*slow_base(front);
-    slow_arm(up);
-    fast_hand(open);
     square_up_back_create(black,square);
     PID_gyro_drive_create(-PID,0.80);
     
@@ -245,7 +262,10 @@ int main()
     fast_hand(tightish);
     short_pause();
     
-    PID_gyro_drive_create(-(PID*2),1.25);
+    PID_gyro_drive_create(-PID,1);
+    turn_with_gyro_create(turn,45);
+    
+/*    PID_gyro_drive_create(-(PID*2),1.25);
     short_pause();
     turn_with_gyro_create(turn,-90);
     PID_gyro_drive_create(-(PID*4/3),2);
@@ -264,7 +284,7 @@ int main()
     PID_gyro_drive_create(-(PID*2),0.35);
     slow_arm(arm_water);
     PID_gyro_drive_create(PID*2,0.5);
-    fast_hand(open); */
+    fast_hand(open);   */
     
     
     

@@ -24,6 +24,7 @@
 int up = down - 900;
 int mid = down - 600;
 int arm_water = down - 400;
+int arm_building = down - 640;
 
 //#define front 1300
 //int front = front;
@@ -32,7 +33,7 @@ int back = front - 1300;
 //#define closed 600
 //int closed = closed;
 int open = closed + 1447;
-int tight = closed - 270;
+int tight = closed - 300;
 int small_open = closed + 1000;
 int tightish = closed - 75;
 

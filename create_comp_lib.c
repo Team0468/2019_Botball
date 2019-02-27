@@ -9,6 +9,7 @@
 #define target_theta_01 140000
 #define target_theta_02 1200000
 #define target_theta_03 485000
+#define target_theta_05 225000
 int target_theta_m45 = target_theta_45;
 int target_theta_m90 = target_theta_90;
 int target_theta_m180 = target_theta_180; 
@@ -218,6 +219,10 @@ void turn_with_gyro_create(int speed, int deg){
             break;
         case 04:
             targetTheta = target_theta_03;
+            create_drive_direct(speed,speed*-1);
+            break;
+        case 05:
+            targetTheta = target_theta_05;
             create_drive_direct(speed,speed*-1);
             break;
         default:
@@ -444,7 +449,7 @@ void turn_90(){
 int bump = 100;
 
 void reach_material(){
-        while(get_create_lclightbump_amt() < bump || get_create_llightbump_amt() < bump){
+    while(get_create_lclightbump_amt() < bump || get_create_llightbump_amt() < bump){
         if (get_create_lfcliff_amt() < 1600){
             create_drive_direct(50,100);
         }
@@ -481,12 +486,13 @@ void reach_material(){
 }
 
 void create_line_follow(int dist){
-        while (get_create_distance() < dist){
+    set_create_distance(0);
+    while (get_create_distance() < dist){
         if (get_create_lfcliff_amt() < 1600){
-            create_drive_direct(75,150);
+            create_drive_direct(134,200);
         }
         else{
-            create_drive_direct(150,75);
+            create_drive_direct(200,134);
         }
         msleep(15);
     }
