@@ -5,11 +5,12 @@
 #include <arm_hand_position.h>
 
 
- 
 
 
-int grey;
 
+//int grey;
+//int analog_white = grey - 500; 
+//int analog_black = grey - 500;
 int white = 1;
 int black = 2;
 int physical = 3;
@@ -269,13 +270,14 @@ void turn_with_gyro(int speed, int deg){
 
 void backward_linefollow(int distance)
 {
-    cmpc(0);
+    cmpc(1);
     cmpc(2);
-    while(gmpc(0)>-distance)
+    while(gmpc(1)<distance)
     {
-        mav(left_motor,.55*(analog(3)));
-        mav(right_motor,.55*(3400-analog(3)));
+        mav(left_motor,.55*(analog(front_IR)));
+        mav(right_motor,.55*(3400-analog(front_IR)));
     }
+    ao();
 }
 
 void cube_verify()
@@ -302,14 +304,14 @@ void PID_gyro_drive_distance(int speed,int distance)
     {
         if(buffer(ET) < distance)
         {
-                mav(right_motor, (speed - (speed * (theta/100000))));            
-                mav(left_motor, (speed + (speed * theta/100000)));
+            mav(right_motor, (speed - (speed * (theta/100000))));            
+            mav(left_motor, (speed + (speed * theta/100000)));
         }
-       else
+        else
         {
-            
-                mav(right_motor, -20);            
-                mav(left_motor,-20);
+
+            mav(right_motor, -20);            
+            mav(left_motor,-20);
         }
         msleep(10);
         printf("%d/n",buffer(ET));
@@ -318,11 +320,25 @@ void PID_gyro_drive_distance(int speed,int distance)
     move(0,0);
 }
 
-void calibration_square(){
-    
+void pre_test(){
+
+    square_up(black,600*multiplier);
+    printf("did it square up??? If so move to line now");
+    while(left_button()!=1){}
+    backward_linefollow(2000);
+    ao();
+    printf("did it linefollow??? If so move to ET test");
+    while(left_button()!=1){}
+    slow_arm(arm_min,fast);
+    PID_gyro_drive_distance(600*multiplier,2400);
+    printf("If evertything works setup in box and begin");
+    while(left_button()!=1){}
+}
+/*void calibration_square(){
+
      analog_white = (analog(0)+analog(1))/2;
     while((analog(0)-white)1100||(analog(1)-white)<1100){
-        
+
         move(600,600);
         move(600,600);
         printf("%d\n",analog(1));
@@ -330,4 +346,33 @@ void calibration_square(){
     ao();
     analog_black = (analog(0)+analog(1))/2;
     grey = (analog_white + analog_black)/2;
+}*/
+
+void valve_verify()
+{   
+    int n;
+    while(n < 10)
+    {
+        mav(left_motor,.35*(analog(2)));
+        mav(right_motor,.35*(3400-analog(2)));
+        if(analog(ET)>1530)
+        {
+            n = n + 1;
+        }
+        else
+        {
+            n = 0;
+        }
+    }
+    ao();
+    n = 0;
+    while(n < 50)
+    {
+        mav(left_motor,5 *(1530 - analog(ET)));
+        mav(right_motor,5*(1530 - analog(ET)));
+        msleep(5);
+        n = n + 1;
+    }
+    motor(0,0);
+    ao();
 }

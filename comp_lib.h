@@ -11,10 +11,12 @@
 #define target_theta_m360 2175000
 #define target_theta_building 260000
 #define target_theta_building_2 260000
-//#define analog_white 2500
-int analog_white;
-int analog_black;
-//#define analog_black 3800
+
+
+#define analog_white 2500
+//int analog_white;
+//int analog_black;
+#define analog_black 3800
 #define digital_right 0
 #define digital_left 1
 #define left_IR 1
@@ -22,7 +24,7 @@ int analog_black;
 #define stop 0
 #define multiplier 1.3
 #define ET 5
-
+#define front_IR 2
 int min_accel_x;
     int max_accel_y;
 /*#define arm 0
@@ -313,11 +315,12 @@ void cube_verify();
 
 void PID_gyro_drive_distance(int speed, int distance);
 
+void pre_test();
+//void calibration_square();
 
-void calibration_square();
 
-
-
+void valve_verify();
+int n;
 
 
 
