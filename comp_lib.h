@@ -22,11 +22,12 @@
 #define left_IR 1
 #define right_IR 0
 #define stop 0
-#define multiplier 1.3
+#define multiplier 1.5
 #define ET 5
 #define front_IR 2
 int min_accel_x;
     int max_accel_y;
+void bookItAcrossValve();
 /*#define arm 0
 #define claw 1
 #define arm_start 600
@@ -323,4 +324,4 @@ void valve_verify();
 int n;
 
 
-
+void PID_get_cube();

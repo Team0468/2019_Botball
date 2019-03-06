@@ -4,9 +4,9 @@
 #include <L_Mechanism.h>
 
 //int arm_max = 1700;
-int arm_prism = arm_max - 400;
-int arm_min = arm_max - 1025;
-int arm_valve = arm_max - 400;
+int arm_prism = arm_max - 380;
+int arm_min = arm_max - 1075;
+int arm_valve = arm_max - 290;
 int arm_building = arm_max - 550;
 
 //int hand_max = 1050

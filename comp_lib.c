@@ -297,8 +297,9 @@ void cube_verify()
 }
 void PID_gyro_drive_distance(int speed,int distance)
 {
-    calibrate_gyro();
 
+
+    calibrate_gyro();
     double theta = 0;
     while(buffer(ET)< (distance-30) || buffer(ET)>(distance + 30))
     {
@@ -310,13 +311,15 @@ void PID_gyro_drive_distance(int speed,int distance)
         else
         {
 
-            mav(right_motor, -20);            
-            mav(left_motor,-20);
+            mav(right_motor, -200);            
+            mav(left_motor,-200);
         }
         msleep(10);
         printf("%d/n",buffer(ET));
         theta += (gyro_z() - bias) * 10;
     }
+
+
     move(0,0);
 }
 
@@ -350,11 +353,11 @@ void pre_test(){
 
 void valve_verify()
 {   
-    int n;
+    int n=0;
     while(n < 10)
     {
-        mav(left_motor,.35*(analog(2)));
-        mav(right_motor,.35*(3400-analog(2)));
+        mav(left_motor,.33*(analog(front_IR)));
+        mav(right_motor,.33*(3400-analog(front_IR)));
         if(analog(ET)>1530)
         {
             n = n + 1;
@@ -368,11 +371,53 @@ void valve_verify()
     n = 0;
     while(n < 50)
     {
-        mav(left_motor,5 *(1530 - analog(ET)));
-        mav(right_motor,5*(1530 - analog(ET)));
+        motor(left_motor,.33 *(1530 - analog(front_IR)));
+        motor(right_motor,.33*(1530 - analog(front_IR)));
         msleep(5);
-        n = n + 1;
+        if(analog(ET)<1530){
+            
+           n = n + 1;
+        }
+        else
+        {
+            n = 0;
+        }
     }
-    motor(0,0);
+    move(0,0);
     ao();
+    n = 0;
 }
+/*void PID_get_cube()
+{
+    while(ET > 1550)
+    {
+        if(analog(3) > 1615)   
+        {
+            move(1300,900);
+            msleep(3);
+        }
+        else if (analog(3)<1585)
+        {
+            move(900,1300);  
+            msleep(3);
+        }
+        else
+        {
+            move(1200,1200);
+            msleep(3);
+        }
+    }
+    while(n<50){
+        motor(left_motor,.4*(1440-analog(ET)));
+        motor(right_motor,.4*(1440-analog(ET)));
+        msleep(5);
+    }
+    if(analog(ET)>1440)
+    {
+        n = n+1;
+    }
+    else{
+        n=0;
+    }
+        
+}*/

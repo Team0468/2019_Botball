@@ -12,6 +12,7 @@ int position_camera(){
     //while(1)
     while(get_object_center_x(2,0) != 80){
         camera_update();
+        printf("BlueX: %d\n",get_object_center_x(2,0));
 
         if (get_object_count(2) < 1){
             off(camera);
@@ -46,26 +47,31 @@ int position_camera(){
 void takeBuildingPic(){
     // This function was written and developed by Ryan P. Webb
     camera_open_black();
+    msleep(1000);
     int i = 0;
     building1 = 0;
     building2 = 0;
     while(1){
-        while(i < 50){
+        while(i < 10){
             camera_update();
-            if(get_object_center_x(0,0) < 90){
+            if(get_object_count(0)>0){
+            if(get_object_center_x(0,0) < 80 && get_object_center_x(0,0)>0){
                 building1 += 1;
-            }else if(get_object_center_x(0,0) > 90){
-                building2 += 2;   
             }
+            else if(get_object_center_x(0,0) > 80){
+                building2 += 1;   
+            }
+            printf("XPos: %d\n",get_object_center_x(0,0));
             i++;
-        }
+            msleep(33);
+        }}
         if (building1 > building2){
             building = 1;
         }else{
             building = 2;   
         }
         printf("Building: %d\n",building);
-        msleep(5000);
+        msleep(2000);
     }
     camera_close();
 }
@@ -74,7 +80,8 @@ void waitingForLight(){
     thread building;
     building = thread_create(takeBuildingPic);
     thread_start(building);
-    wait_for_light(3);
+    wait_for_light(4);
+    //msleep(5000);
     thread_destroy(building);
     camera_close();
 }

@@ -31,15 +31,15 @@ int slow_arm (int x,int speed)//this funtion slows
     else {desired_position = x;}
     switch(speed){
         case 1:
-            while(current_position != desired_position)
+            while(current_position <= desired_position-2 || current_position >= desired_position+2)
             {
                 if(current_position < desired_position)
-                { current_position=current_position +1;
+                { current_position=current_position +2;
                  set_servo_position(arm, current_position);
                  msleep(1);
                 }
                 if(current_position > desired_position)
-                { current_position=current_position -1;
+                { current_position=current_position -2;
                  set_servo_position(arm, current_position);
 
                  msleep(1);
@@ -83,15 +83,15 @@ int slow_hand ( int z, int speed )//this funtion slows
     else {desired_position = z;}
     switch(speed){
         case 1:
-            while(current_position != desired_position)
+            while(current_position <= desired_position-2 || current_position >= desired_position+2)
             {
                 if(current_position < desired_position)
-                { current_position=current_position +1;
+                { current_position=current_position +2;
                  set_servo_position(hand, current_position);
                  msleep(1);
                 }
                 if(current_position > desired_position)
-                { current_position=current_position -1;
+                { current_position=current_position -2;
                  set_servo_position(hand, current_position);
                  msleep(1);
                 }
